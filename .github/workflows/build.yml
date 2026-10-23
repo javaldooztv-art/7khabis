@@ -12,9 +12,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Unpack Project
+      - name: Extract and Flatten Files
         run: |
-          unzip -o HaftKhabisVIP-Android-Project.zip
+          mkdir -p temp_extracted
+          unzip -o HaftKhabisVIP* -d temp_extracted
+          
+          # پیدا کردن محل قرارگیری settings.gradle.kts و انتقال محتویات به ریشه
+          SETTINGS_DIR=$(dirname $(find temp_extracted -name "settings.gradle.kts" | head -n 1))
+          if [ -n "$SETTINGS_DIR" ] && [ -d "$SETTINGS_DIR" ]; then
+            cp -r "$SETTINGS_DIR"/* .
+          fi
+          
           ls -la
 
       - name: Set up JDK 17
